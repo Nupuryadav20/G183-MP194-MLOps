@@ -1,0 +1,70 @@
+# MP194 findings --- fill in every value, keep every key.
+# The marking tool reads this file. Write null only where the comment says so.
+# Use the exact column names and group values from your data files.
+
+group_id: "G183"          # your group id, e.g. "G042"
+problem_id: "MP194"
+
+
+
+data_issues:
+  leaking_column:
+    present: false
+    column: null
+
+  unit_mixup:
+    present: true
+    column: house_area_sqft
+    group_value: Feeder-3
+    factor: 0.092903
+
+  sentinel_value:
+    present: true
+    column: solar_kw
+    value: -999
+    count: 34
+
+  duplicate_rows:
+    present: false
+    count: null
+
+  stuck_sensor:
+    present: true
+    column: members
+    start_date: "2026-05-05"
+    end_date: "2026-05-21"
+
+  target_typos:
+    present: false
+    count: null
+
+  spelling_variants:
+    present: true
+    column: connection
+    true_levels: 3
+
+
+
+tracking:
+  experiment_name: null
+  best_run_id: null        # the MLflow run id of your v1 model
+  registered_model_name: null
+  champion_version: null
+
+monitoring:
+  psi:                     # cleaned train.csv vs later.csv, 10 bins
+    rooms: null
+    members: null
+    ac_hours_per_day: null
+    avg_temp_c: null
+    house_area_sqft: null
+    solar_kw: null
+  most_drifted_feature: null
+  mae_by_group:            # v1 on later.csv, per value of feeder
+    'Feeder-1': null
+    'Feeder-2': null
+    'Feeder-3': null
+  worst_served_group: null
+  mae_v1_on_check: null    # v1 on the last 30% of later.csv (by date)
+  mae_v2_on_check: null    # v2 on the same rows
+  decision: null           # promote or keep
