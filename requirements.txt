@@ -1,6 +1,13 @@
+cat > requirements.txt <<'EOF'
 pandas==2.2.3
 numpy
 scikit-learn
 PyYAML
 dvc
 pytest
+mlflow==3.18.0
+joblib
+fastapi
+uvicorn
+httpx
+EOF

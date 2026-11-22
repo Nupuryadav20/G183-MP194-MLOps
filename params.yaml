@@ -1,0 +1,46 @@
+data:
+  train_path: data/raw/train.csv
+  later_path: data/raw/later.csv
+  output_dir: data/processed
+
+cleaning:
+  area_column: house_area_sqft
+  affected_feeder: Feeder-3
+  area_conversion_factor: 0.092903
+
+  sentinel_column: solar_kw
+  sentinel_value: -999
+
+  stuck_sensor:
+    column: members
+    start_date: "2026-05-05"
+    end_date: "2026-05-21"
+    expected_value: 5
+
+  categorical_column: connection
+
+  category_aliases:
+    domestic: domestic
+    dom: domestic
+    domesticplus: domestic_plus
+    shopcumhome: shop_cum_home
+    sho: shop_cum_home
+
+model:
+  experiment_name: G183_MP194
+  registered_model_name: MP194_Household_Electricity
+  validation_size: 0.2
+  random_state: 42
+  target: units_kwh
+
+  numerical_features:
+    - rooms
+    - members
+    - ac_hours_per_day
+    - avg_temp_c
+    - house_area_sqft
+    - solar_kw
+
+  categorical_features:
+    - connection
+    - feeder
