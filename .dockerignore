@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.venv/
+.git/
+.gitignore
+.dvc/
+.dvcignore
+data/
+mlflow.db
+mlruns/
+reports/
+predictions/
+.DS_Store
+*.ipynb
+*.log

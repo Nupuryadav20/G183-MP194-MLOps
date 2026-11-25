@@ -2,3 +2,19 @@
 
 __pycache__/
 *.py[cod]
+
+# Virtual environment
+.venv/
+
+# Pytest cache
+.pytest_cache/
+
+# DVC cache (the .dvc/ metadata files ARE committed; this ignores the cache dir)
+.dvc/cache/
+
+# MLflow run artefacts (the database mlflow.db IS committed; artefacts are large)
+mlruns/
+
+# Local environment / secrets – never commit these
+.env
+*.env

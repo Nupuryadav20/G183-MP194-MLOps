@@ -1,4 +1,3 @@
-cat > requirements.txt <<'EOF'
 pandas==2.2.3
 numpy
 scikit-learn
@@ -8,6 +7,5 @@ pytest
 mlflow==3.18.0
 joblib
 fastapi
-uvicorn
+uvicorn[standard]
 httpx
-EOF
