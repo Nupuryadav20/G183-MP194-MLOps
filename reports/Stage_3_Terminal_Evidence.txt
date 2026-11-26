@@ -1,0 +1,97 @@
+MP194 STAGE 3  |  TERMINAL EVIDENCE
+26 November 2026  |  Reviewed main d3ada83 and Stage 3 commit f75d7c1
+
+Selected output excerpts. Host-specific paths have been shortened.
+
+Repository and file inspection
+$ git status --short --branch
+## main...origin/main
+$ git remote -v
+origin  https://github.com/Nupuryadav20/G183-MP194-MLOps.git
+$ git log -4 --oneline --decorate
+d3ada83 (HEAD -> main, origin/main, origin/HEAD) Merge branch 'main' ...
+f75d7c1 (origin/stage3-implementation) Complete Stage 3: FastAPI app, Dockerfile, Kubernetes, GitHub Actions CI
+$ git ls-files app src models params.yaml
+app/__init__.py
+app/main.py
+models/model.joblib
+params.yaml
+src/mp194/__init__.py
+src/mp194/cleaning.py
+src/mp194/data_checks.py
+src/mp194/train.py
+Inspected with nl -ba: Dockerfile, .dockerignore, requirements.txt,
+k8s/deployment.yaml, k8s/service.yaml, .github/workflows/ci.yml.
+Inspected with sed: app/main.py and tests/test_api.py.
+
+Docker
+$ docker version
+Context: desktop-linux
+failed to connect to the docker API ... docker.sock: connect: no such file or directory
+$ docker desktop start
+Failed to start Docker Desktop
+$ docker build -t mp194-api:1.0 .
+ERROR: failed to connect to the docker API ... docker.sock: connect: no such file or directory
+The build stopped before any Dockerfile instruction ran. The requested
+docker run command and container endpoint checks were not reached.
+
+Kubernetes
+$ kubectl config current-context
+error: current-context is not set
+$ kubectl config get-contexts
+CURRENT   NAME   CLUSTER   AUTHINFO   NAMESPACE
+$ kubectl --request-timeout=7s cluster-info
+Unable to connect to the server: dial tcp [::1]:8080: connect: operation not permitted
+
+Dependencies and CI
+$ python3.12 -m venv --system-site-packages <temporary-directory>/venv
+$ <venv>/bin/python -m pip --disable-pip-version-check install --retries 0 --timeout 5 -r requirements.txt
+ERROR: Could not find a version that satisfies the requirement pandas==2.2.3 (from versions: none)
+ERROR: No matching distribution found for pandas==2.2.3
+This is a local installation result from the restricted environment.
+
+Python 3.12 import check (repo root excluded, PYTHONPATH=src)
+$ PYTHONSAFEPATH=1 PYTHONPATH=src python3.12 -c '<find_spec check>'
+app: None
+mp194: ModuleSpec(name='mp194', ...)
+
+CI-style pytest collection using available Python 3.14 tooling
+$ PYTHONPATH=src <python3.14> -P -c '<invoke pytest with -v --collect-only -p no:cacheprovider>'
+collected 29 items / 2 errors
+ERROR tests/test_api.py
+E   ModuleNotFoundError: No module named 'app'
+ERROR tests/test_training.py
+E   ModuleNotFoundError: No module named 'mlflow'
+The MLflow error reflects the local environment, where MLflow was absent.
+
+GitHub Actions run list
+CI #1: FAILED, Stage 3 push, f75d7c1
+CI #2: FAILED, pull request #1
+CI #3: FAILED, main push, d3ada83
+Run #3 public annotation, Run pytest -v:
+Process completed with exit code 2.
+Full runner logs required GitHub sign-in.
+Run list: https://github.com/Nupuryadav20/G183-MP194-MLOps/actions
+Run #3 test job: https://github.com/Nupuryadav20/G183-MP194-MLOps/actions/runs/45679519842/job/139436013990
+
+Host API and logging smoke test
+$ PYTHONDONTWRITEBYTECODE=1 python3 -u - < <inline smoke test>
+Python 3.14, FastAPI TestClient, in-memory stdout capture. The test
+loaded the committed model and temporarily simulated a prediction
+exception. It also emitted a sample access record through the default
+Uvicorn access logger to check its output format.
+
+/health 200
+/docs 200
+POST /predict 200
+POST /predict invalid 422
+POST /predict forced exception 500
+
+JSON STDOUT: {"level": "INFO", "logger": "mp194.api", "message": "Model loaded", "model_type": "Pipeline"}
+JSON STDOUT: {"level": "INFO", "logger": "mp194.api", "message": "Prediction request", "rooms": 3, "members": 4, "connection": "domestic", "feeder": "Feeder-1"}
+JSON STDOUT: {"level": "INFO", "logger": "mp194.api", "message": "Prediction done", "prediction_kwh": 486.14}
+JSON STDOUT: {"level": "ERROR", "logger": "mp194.api", "message": "Unhandled error", "error": "RuntimeError"}
+NON-JSON STDOUT: INFO:     127.0.0.1:12345 - "GET /health HTTP/1.1" 200 OK
+
+The working tree was clean after testing. No project files were
+modified, committed, or pushed.
